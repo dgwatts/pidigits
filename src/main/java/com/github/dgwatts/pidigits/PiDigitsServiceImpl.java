@@ -14,7 +14,7 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 		final PiDigit[] toReturn = new PiDigit[end - start];
 
 		for(int i = 0; i < (end - start); i++) {
-			toReturn[i] = get(i + start);
+			toReturn[i] = getDigit(i + start);
 		}
 
 		return toReturn;
@@ -26,20 +26,20 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 	}
 
 	@Override
-	public PiDigit get(int index) throws IOException {
-		return new PiDigit(index, getDigit(index));
+	public PiDigit getDigit(int index) throws IOException {
+		return new PiDigit(index, doGet(index));
 	}
 
 	@Override
 	public PiDigit[] getDigits(int[] indices) throws IOException {
 		PiDigit[] toReturn = new PiDigit[indices.length];
 		for(int i = 0; i < indices.length; i++) {
-			toReturn[i] = get(indices[i]);
+			toReturn[i] = getDigit(indices[i]);
 		}
 		return toReturn;
 	}
 
-	private char getDigit(int index) throws IOException {
+	private char doGet(int index) throws IOException {
 		ClassPathResource digits = new ClassPathResource("pi1000000.txt");
 		char read = 'x';
 		InputStream in = digits.getInputStream();

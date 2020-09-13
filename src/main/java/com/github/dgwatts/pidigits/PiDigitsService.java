@@ -26,7 +26,7 @@ public interface PiDigitsService {
 	 * @param index The index of the digut to return
 	 * @return The specified digit.
 	 */
-	PiDigit get(int index) throws IOException;
+	PiDigit getDigit(int index) throws IOException;
 
 	/**
 	 * Get a selection of digits from the decimal portion of pi. The specified indices do not have to be contiguous or ordered
