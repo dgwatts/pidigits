@@ -1,0 +1,30 @@
+ext.versions = [
+	slf4j: "1.7.21",
+	springBoot: "2.3.3.RELEASE!!"
+]
+
+ext.libraries = [
+	gson: "com.google.code.gson:gson:2.8.0",
+	slf4j: [
+			api: "org.slf4j:slf4j-api:${ext.versions.slf4j}",
+			//<!-- Basic System.out logger -->
+			simple: "org.slf4j:slf4j-simple:${ext.versions.slf4j}",
+	],
+	springBoot: [
+			dependencies: "org.springframework.boot:spring-boot-dependencies:${ext.versions.springBoot}",
+			starterWeb: "org.springframework.boot:spring-boot-starter-web:${ext.versions.springBoot}",
+			starterActuator: "org.springframework.boot:spring-boot-starter-actuator:${ext.versions.springBoot}",
+			starterTomcat: "org.springframework.boot:spring-boot-starter-tomcat:${ext.versions.springBoot}",
+			starterTest: "org.springframework.boot:spring-boot-starter-test:${ext.versions.springBoot}",
+			devTools: "org.springframework.boot:spring-boot-devtools:${ext.versions.springBoot}",
+			exclusions: {
+				exclude module: "logback-classic"
+				exclude module: "spring-boot-starter-logging"
+			},
+			testExclusions: {
+				exclude module: "logback-classic"
+				exclude module: "spring-boot-starter-logging"
+				exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+			}
+	],
+]
