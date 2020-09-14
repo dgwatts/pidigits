@@ -1,3 +1,4 @@
 rootProject.name = 'pidigits'
 
 include ':backend'
+include ':frontend'
