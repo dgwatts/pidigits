@@ -1,0 +1,45 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot'
+
+}
+
+dependencies {
+	// Spring Boot deps, with logback excluded. Defined first to ensure the dependencies declared in it are resolved first
+	implementation platform(libraries.springBoot.dependencies), libraries.springBoot.exclusions
+
+	implementation libraries.springBoot.starterWeb, libraries.springBoot.exclusions
+	implementation libraries.springBoot.starterActuator, libraries.springBoot.exclusions
+	implementation libraries.springBoot.starterTomcat, libraries.springBoot.exclusions
+
+	implementation libraries.gson
+
+	implementation libraries.slf4j.api
+	implementation libraries.slf4j.simple
+
+	//compileOnly project(":frontent")
+
+	developmentOnly libraries.springBoot.devTools, libraries.springBoot.exclusions
+	testImplementation libraries.springBoot.starterTest, libraries.springBoot.testExclusions
+}
+
+//bootJar {
+//	mainClassName 'com.github.dgwatts.pidigits.PidigitsApplication'
+//}
+
+docker {
+	springBootApplication {
+		maintainer = "dgwatts+yozu@gmail.com"
+		baseImage = 'openjdk:8-alpine'
+		ports = [8080]
+		images.add("${System.env.AWS_ECR_ID}.dkr.ecr.${System.env.AWS_ECR_REGION}.amazonaws.com/${System.env.AWS_ECR_REPO}:${project.version}")
+	}
+
+	registryCredentials {
+		url = 'https://${System.env.AWS_ECR_ID}.dkr.ecr.${System.env.AWS_ECR_ID}.amazonaws.com'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
