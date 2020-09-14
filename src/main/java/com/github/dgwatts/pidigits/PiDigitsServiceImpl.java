@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -11,8 +13,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class PiDigitsServiceImpl implements PiDigitsService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PiDigitsServiceImpl.class);
+
+	private static final String RESOURCE = "pi1000000.txt";
+	private int resourceSize = -1;
+
 	@Autowired
 	private ConfigurationService configurationService;
+
+	@PostConstruct
+	public void readStreamLength() throws IOException {
+		InputStream in = new ClassPathResource(RESOURCE).getInputStream();
+		int read = -1;
+		byte[] buf = new byte[1024];
+		while ((read = in.read(buf)) != -1) {
+			resourceSize += read;
+		}
+
+		LOG.info("{} decimal digits available", read);
+	}
 
 	@Override
 	public PiDigitResponse getRange(int start, int end) throws IOException {
@@ -48,11 +67,14 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 	}
 
 	private char doGet(int index) throws IOException {
-		ClassPathResource digits = new ClassPathResource("pi1000000.txt");
 		char read = 'x';
-		InputStream in = digits.getInputStream();
+		InputStream in = new ClassPathResource(RESOURCE).getInputStream();
 		for(int i = 0; i <= index; i++) {
 			read = (char) in.read();
+			if(read == -1) {
+				// Gone past the end of the stream
+				throw new IOException("Attempted to read past end of stream");
+			}
 		}
 		return read;
 	}
