@@ -38,9 +38,9 @@ public class PiDigitsControllerTest {
 				.andExpect(status().isOk())
 				.andDo(cg);
 
-		final PiDigit[] digits = cg.getRoot();
+		final PiDigitResponse response = cg.getRoot();
 
-		assertEquals("default returns 30 elements", 30, digits.length);
+		assertEquals("default returns 30 elements", 30, response.getDigits().length);
 	}
 
 	@Test
@@ -50,10 +50,10 @@ public class PiDigitsControllerTest {
 				.andExpect(status().isOk())
 				.andDo(cg);
 
-		final PiDigit[] digits = cg.getRoot();
+		final PiDigitResponse response = cg.getRoot();
 
-		assertEquals("returns 1 element", 1, digits.length);
-		assertEquals("10th digit", TestUtils.FIRST_TEN[9], digits[0].getValue());
+		assertEquals("returns 1 element", 1, response.getDigits().length);
+		assertEquals("10th digit", TestUtils.FIRST_TEN[9], response.getDigits()[0].getValue());
 	}
 
 	@Test
@@ -63,10 +63,10 @@ public class PiDigitsControllerTest {
 				.andExpect(status().isOk())
 				.andDo(cg);
 
-		final PiDigit[] digits = cg.getRoot();
+		final PiDigitResponse response = cg.getRoot();
 
-		assertEquals("returns 10 elements", 10, digits.length);
-		assertRangeEquals(digits, TestUtils.FIRST_TEN);
+		assertEquals("returns 10 elements", 10, response.getDigits().length);
+		assertRangeEquals(response.getDigits(), TestUtils.FIRST_TEN);
 	}
 
 	@Test
@@ -76,12 +76,12 @@ public class PiDigitsControllerTest {
 				.andExpect(status().isOk())
 				.andDo(cg);
 
-		final PiDigit[] digits = cg.getRoot();
+		final PiDigitResponse response= cg.getRoot();
 
-		assertEquals("returns 5 elements", 5, digits.length);
-		for (int i = 0; i < digits.length; i++) {
-			assertEquals("index " + (i*2), i*2, digits[i].getIndex());
-			assertEquals("digit " + i*2, TestUtils.FIRST_TEN[i*2], digits[i].getValue());
+		assertEquals("returns 5 elements", 5, response.getDigits().length);
+		for (int i = 0; i < response.getDigits().length; i++) {
+			assertEquals("index " + (i*2), i*2, response.getDigits()[i].getIndex());
+			assertEquals("digit " + i*2, TestUtils.FIRST_TEN[i*2], response.getDigits()[i].getValue());
 		}
 	}
 
@@ -90,19 +90,19 @@ public class PiDigitsControllerTest {
 		private Gson gson = new Gson();
 
 		private String content;
-		private PiDigit[] root;
+		private PiDigitResponse root;
 
 		@Override
 		public void handle(MvcResult mvcResult) throws Exception {
 			content = mvcResult.getResponse().getContentAsString();
-			root = gson.fromJson(content, PiDigit[].class);
+			root = gson.fromJson(content, PiDigitResponse.class);
 		}
 
 		public String getContent() {
 			return content;
 		}
 
-		public PiDigit[] getRoot() {
+		public PiDigitResponse getRoot() {
 			return root;
 		}
 	}

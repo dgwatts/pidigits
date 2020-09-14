@@ -21,12 +21,12 @@ public class PiDigitsController {
 	private PiDigitsServiceImpl piDigitsService;
 
 	@GetMapping("/pidigits")
-	public PiDigit[] getDigits() throws IOException {
+	public PiDigitResponse getDigits() throws IOException {
 		return getDigits(null);
 	}
 
 	@GetMapping("/pidigits/{criteria}")
-	public PiDigit[] getDigits(@PathVariable String criteria) throws IOException {
+	public PiDigitResponse getDigits(@PathVariable String criteria) throws IOException {
 
 		if(criteria == null || criteria.trim().isEmpty()) {
 			return piDigitsService.getRange(DEFAULT_RANGE);
@@ -52,6 +52,6 @@ public class PiDigitsController {
 			return piDigitsService.getDigits(indices);
 		}
 
-		return new PiDigit[0];
+		return new PiDigitResponse();
 	}
 }
