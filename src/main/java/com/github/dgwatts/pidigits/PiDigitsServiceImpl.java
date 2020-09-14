@@ -3,6 +3,7 @@ package com.github.dgwatts.pidigits;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,8 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 		for(int i = 0; i < (end - start); i++) {
 			toReturn[i] = getDigit(i + start);
 		}
+	@Autowired
+	private ConfigurationService configurationService;
 
 		return toReturn;
 	}
