@@ -108,14 +108,14 @@ public class PiDigitsControllerTest {
 	public void testControllerPastEndOfRange() throws Exception {
 		mockMvc.perform(get("/pidigits/" + (1000000 + 500)))
 				.andDo(print())
-				.andExpect(status().isRequestedRangeNotSatisfiable());
+				.andExpect(status().isPartialContent());
 	}
 
 	@Test
 	public void testControllerPastTruncatedAndPastEndOfRange() throws Exception {
 		mockMvc.perform(get("/pidigits/" + (1000000 - 400) + "-" + (1000000+400)))
 				.andDo(print())
-				.andExpect(status().isRequestedRangeNotSatisfiable());
+				.andExpect(status().isPartialContent());
 	}
 
 	class ContentGetter implements ResultHandler {

@@ -60,9 +60,7 @@ public class PiDigitsController {
 			}
 		}
 
-		if(piDigitResponse != null && piDigitResponse.isOutOfBounds()) {
-			response.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-		} else if(piDigitResponse != null && piDigitResponse.isTruncated()) {
+		if(piDigitResponse != null && (piDigitResponse.isOutOfBounds() || piDigitResponse.isTruncated())) {
 			response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
 		}
 
