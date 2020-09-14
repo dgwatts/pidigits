@@ -16,7 +16,7 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 	private static final Logger LOG = LoggerFactory.getLogger(PiDigitsServiceImpl.class);
 
 	private static final String RESOURCE = "pi1000000.txt";
-	private int resourceSize = -1;
+	private int resourceSize = 0;
 
 	@Autowired
 	private ConfigurationService configurationService;
@@ -30,7 +30,7 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 			resourceSize += read;
 		}
 
-		LOG.info("{} decimal digits available", read);
+		LOG.info("{} decimal digits available", resourceSize);
 	}
 
 	@Override
