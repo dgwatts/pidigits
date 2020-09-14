@@ -6,17 +6,20 @@ public class PiDigitResponse {
 
 	private boolean truncated = false;
 
+	private boolean outOfBounds = false;
+
 	public PiDigitResponse() {
 		this(new PiDigit[0]);
 	}
 
 	public PiDigitResponse(PiDigit[] digits) {
-		this(digits, false);
+		this(digits, false, false);
 	}
 
-	public PiDigitResponse(PiDigit[] digits, boolean truncated) {
+	public PiDigitResponse(PiDigit[] digits, boolean truncated, boolean outOfBounds) {
 		this.digits = digits;
 		this.truncated = truncated;
+		this.outOfBounds = outOfBounds;
 	}
 
 	public PiDigit[] getDigits() {
@@ -25,5 +28,9 @@ public class PiDigitResponse {
 
 	public boolean isTruncated() {
 		return truncated;
+	}
+
+	public boolean isOutOfBounds() {
+		return outOfBounds;
 	}
 }
