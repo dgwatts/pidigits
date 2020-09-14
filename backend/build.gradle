@@ -45,7 +45,7 @@ docker {
 		maintainer = "dgwatts+yozu@gmail.com"
 		baseImage = 'openjdk:8-alpine'
 		ports = [8080]
-		images.add("${System.env.AWS_ECR_ID}.dkr.ecr.${System.env.AWS_ECR_REGION}.amazonaws.com/${System.env.AWS_ECR_REPO}:${project.version}")
+		images.add("${System.env.AWS_ECR_ID}.dkr.ecr.${System.env.AWS_ECR_REGION}.amazonaws.com/${System.env.AWS_ECR_REPO}:${rootProject.version}")
 	}
 
 	registryCredentials {
