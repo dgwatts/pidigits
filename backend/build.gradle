@@ -1,7 +1,10 @@
 plugins {
 	id 'java'
 	id 'org.springframework.boot'
-
+	id 'io.spring.dependency-management'
+	id "com.bmuschko.docker-remote-api" version "6.6.1"
+	id 'com.bmuschko.docker-spring-boot-application' version '6.6.1'
+	id "com.patdouble.awsecr" version "0.6.1"
 }
 
 dependencies {
@@ -17,15 +20,25 @@ dependencies {
 	implementation libraries.slf4j.api
 	implementation libraries.slf4j.simple
 
-	//compileOnly project(":frontent")
-
 	developmentOnly libraries.springBoot.devTools, libraries.springBoot.exclusions
 	testImplementation libraries.springBoot.starterTest, libraries.springBoot.testExclusions
 }
 
-//bootJar {
-//	mainClassName 'com.github.dgwatts.pidigits.PidigitsApplication'
-//}
+jar {
+	from('../frontend/dist') {
+		into 'static'
+	}
+}
+
+bootJar {
+	from('../frontend/build') {
+		into 'static'
+	}
+
+	mainClassName 'com.github.dgwatts.pidigits.PidigitsApplication'
+}
+
+bootJar.dependsOn(':frontend:npm_run_build')
 
 docker {
 	springBootApplication {
