@@ -19,9 +19,4 @@ public class ConfigurationService {
 	public int getMaxDigits() {
 		return maxDigits;
 	}
-
-	@PostConstruct
-	public void fred() {
-		System.out.println("constrcuted");
-	}
 }
