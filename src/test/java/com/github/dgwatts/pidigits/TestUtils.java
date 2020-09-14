@@ -18,7 +18,7 @@ public class TestUtils {
 
 	public static void assertRangeEquals(PiDigit[] range, char[] expected, int shunt) {
 		for (int i = 0; i < range.length; i++) {
-			assertEquals("index " + i, i, range[i].getIndex());
+			assertEquals("index " + (i + shunt), i + shunt, range[i].getIndex());
 			assertEquals("digit " + i, expected[i], range[i].getValue());
 		}
 	}

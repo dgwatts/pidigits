@@ -54,7 +54,7 @@ public class PiDigitsServiceImplTest {
 
 		assertEquals("10 elements", TestUtils.FIRST_TEN.length, range.length);
 
-		assertRangeEquals(range, TestUtils.LAST_TEN);
+		assertRangeEquals(range, TestUtils.FIRST_TEN);
 	}
 
 	@Test
