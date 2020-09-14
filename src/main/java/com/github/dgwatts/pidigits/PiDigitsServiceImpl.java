@@ -2,6 +2,7 @@ package com.github.dgwatts.pidigits;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -10,36 +11,40 @@ import org.springframework.stereotype.Service;
 @Service
 public class PiDigitsServiceImpl implements PiDigitsService {
 
-	@Override
-	public PiDigit[] getRange(int start, int end) throws IOException {
-		final PiDigit[] toReturn = new PiDigit[end - start];
-
-		for(int i = 0; i < (end - start); i++) {
-			toReturn[i] = getDigit(i + start);
-		}
 	@Autowired
 	private ConfigurationService configurationService;
 
-		return toReturn;
+	@Override
+	public PiDigitResponse getRange(int start, int end) throws IOException {
+		return getDigits(IntStream.range(start, end).toArray());
 	}
 
 	@Override
-	public PiDigit[] getRange(int end) throws IOException {
+	public PiDigitResponse getRange(int end) throws IOException {
 		return getRange(0, end);
 	}
 
 	@Override
-	public PiDigit getDigit(int index) throws IOException {
-		return new PiDigit(index, doGet(index));
+	public PiDigitResponse getDigit(int index) throws IOException {
+		return new PiDigitResponse(new PiDigit[]{new PiDigit(index, doGet(index))});
 	}
 
 	@Override
-	public PiDigit[] getDigits(int[] indices) throws IOException {
-		PiDigit[] toReturn = new PiDigit[indices.length];
-		for(int i = 0; i < indices.length; i++) {
-			toReturn[i] = getDigit(indices[i]);
+	public PiDigitResponse getDigits(int[] indices) throws IOException {
+		boolean isTruncated = false;
+		final int maxDigits = configurationService.getMaxDigits();
+		if(indices.length > maxDigits) {
+			int[] truncated = new int[maxDigits];
+			System.arraycopy(indices, 0, truncated, 0, maxDigits);
+			indices = truncated;
+			isTruncated = true;
 		}
-		return toReturn;
+
+		PiDigit[] digits = new PiDigit[indices.length];
+		for(int i = 0; i < indices.length; i++) {
+			digits[i] = new PiDigit(indices[i], doGet(indices[i]));
+		}
+		return new PiDigitResponse(digits, isTruncated);
 	}
 
 	private char doGet(int index) throws IOException {
