@@ -27,7 +27,9 @@ plugins {
 	id "com.github.node-gradle.node" version "2.2.3"
 	id "org.sonarqube" version "3.0"
 	id "com.github.jk1.dependency-license-report" version "1.13"
-	id 'com.palantir.docker' version '0.25.0'
+	id "com.bmuschko.docker-remote-api" version "6.6.1"
+	id 'com.bmuschko.docker-spring-boot-application' version '6.6.1'
+	id "com.patdouble.awsecr" version "0.6.1"
 }
 
 apply from: 'dependencies.gradle'
@@ -38,6 +40,11 @@ sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
+}
+
+allprojects {
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
 }
 
 dependencies {
@@ -52,6 +59,19 @@ dependencies {
 
 	developmentOnly libraries.springBoot.devTools, libraries.springBoot.exclusions
 	testImplementation libraries.springBoot.starterTest, libraries.springBoot.testExclusions
+}
+
+docker {
+	springBootApplication {
+		maintainer = "dgwatts+yozu@gmail.com"
+		baseImage = 'openjdk:8-alpine'
+		ports = [8080]
+		images.add("${System.env.AWS_ECR_ID}.dkr.ecr.${System.env.AWS_ECR_REGION}.amazonaws.com/${System.env.AWS_ECR_REPO}:${project.version}")
+	}
+
+	registryCredentials {
+		url = 'https://${System.env.AWS_ECR_ID}.dkr.ecr.${System.env.AWS_ECR_ID}.amazonaws.com'
+	}
 }
 
 test {
