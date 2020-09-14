@@ -45,7 +45,7 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 
 	@Override
 	public PiDigitResponse getDigit(int index) throws IOException {
-		return new PiDigitResponse(new PiDigit[]{new PiDigit(index, doGet(index))});
+		return getDigits(new int[]{index});
 	}
 
 	@Override
