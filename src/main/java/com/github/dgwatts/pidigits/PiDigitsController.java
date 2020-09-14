@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,9 @@ public class PiDigitsController {
 	@Autowired
 	private PiDigitsServiceImpl piDigitsService;
 
+	@Autowired
+	private HttpServletResponse response;
+
 	@GetMapping("/pidigits")
 	public PiDigitResponse getDigits() throws IOException {
 		return getDigits(null);
@@ -28,30 +33,39 @@ public class PiDigitsController {
 	@GetMapping("/pidigits/{criteria}")
 	public PiDigitResponse getDigits(@PathVariable String criteria) throws IOException {
 
+		PiDigitResponse piDigitResponse = new PiDigitResponse();
+
 		if(criteria == null || criteria.trim().isEmpty()) {
-			return piDigitsService.getRange(DEFAULT_RANGE);
+			piDigitResponse = piDigitsService.getRange(DEFAULT_RANGE);
+		} else {
+			final Matcher matcher = rangePattern.matcher(criteria);
+			if (matcher.matches()) {
+				String startStr = matcher.group(1);
+				String endStr = matcher.group(2);
+
+				int start = Integer.parseInt(startStr);
+				int end = Integer.parseInt(endStr);
+
+				piDigitResponse = piDigitsService.getRange(start, end);
+			} else if (criteria.matches("[0-9]+(,[0-9]+)*")) {
+				final int[] indices = Arrays.stream(
+						criteria.split(","))
+						.mapToInt(Integer::parseInt)
+						.toArray();
+
+				piDigitResponse = piDigitsService.getDigits(indices);
+			} else {
+				piDigitResponse = null;
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			}
 		}
 
-		final Matcher matcher = rangePattern.matcher(criteria);
-		if(matcher.matches()) {
-			String startStr = matcher.group(1);
-			String endStr = matcher.group(2);
-
-			int start = Integer.parseInt(startStr);
-			int end = Integer.parseInt(endStr);
-
-			return piDigitsService.getRange(start, end);
+		if(piDigitResponse != null && piDigitResponse.isOutOfBounds()) {
+			response.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+		} else if(piDigitResponse != null && piDigitResponse.isTruncated()) {
+			response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
 		}
 
-		if(criteria.matches("[0-9]+(,[0-9]+)*")) {
-			final int[] indices = Arrays.stream(
-				criteria.split(","))
-				.mapToInt(Integer::parseInt)
-				.toArray();
-
-			return piDigitsService.getDigits(indices);
-		}
-
-		return new PiDigitResponse();
+		return piDigitResponse;
 	}
 }
