@@ -70,6 +70,18 @@ public class PiDigitsControllerTest {
 	}
 
 	@Test
+	public void testControllerRangeTruncated() throws Exception {
+		mockMvc.perform(get("/pidigits/0-600"))
+				.andDo(print())
+				.andExpect(status().isPartialContent())
+				.andDo(cg);
+
+		final PiDigitResponse response = cg.getRoot();
+
+		assertEquals("returns 500 elements", 500, response.getDigits().length);
+	}
+
+	@Test
 	public void testControllerList() throws Exception {
 		mockMvc.perform(get("/pidigits/0,2,4,6,8"))
 				.andDo(print())
@@ -83,6 +95,27 @@ public class PiDigitsControllerTest {
 			assertEquals("index " + (i*2), i*2, response.getDigits()[i].getIndex());
 			assertEquals("digit " + i*2, TestUtils.FIRST_TEN[i*2], response.getDigits()[i].getValue());
 		}
+	}
+
+	@Test
+	public void testControllerBadArgs() throws Exception {
+		mockMvc.perform(get("/pidigits/bad"))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	public void testControllerPastEndOfRange() throws Exception {
+		mockMvc.perform(get("/pidigits/" + (1000000 + 500)))
+				.andDo(print())
+				.andExpect(status().isRequestedRangeNotSatisfiable());
+	}
+
+	@Test
+	public void testControllerPastTruncatedAndPastEndOfRange() throws Exception {
+		mockMvc.perform(get("/pidigits/" + (1000000 - 400) + "-" + (1000000+400)))
+				.andDo(print())
+				.andExpect(status().isRequestedRangeNotSatisfiable());
 	}
 
 	class ContentGetter implements ResultHandler {

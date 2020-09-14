@@ -2,6 +2,7 @@ package com.github.dgwatts.pidigits;
 
 import static com.github.dgwatts.pidigits.TestUtils.assertRangeEquals;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 import java.io.IOException;
@@ -90,7 +91,8 @@ public class PiDigitsServiceImplTest {
 
 	@Test
 	public void testGetDigitsEveryOtherDigitOfFirstTen() throws IOException {
-		final PiDigit[] digits = instanceUnderTest.getDigits(new int[]{0, 2, 4, 6, 8}).getDigits();
+		final PiDigitResponse response = instanceUnderTest.getDigits(new int[]{0, 2, 4, 6, 8});
+		final PiDigit[] digits = response.getDigits();
 
 		assertEquals("5 elements", 5, digits.length);
 
@@ -98,5 +100,48 @@ public class PiDigitsServiceImplTest {
 			assertEquals("index " + (i*2), i*2, digits[i].getIndex());
 			assertEquals("digit " + i*2, TestUtils.FIRST_TEN[i*2], digits[i].getValue());
 		}
+	}
+
+	@Test
+	public void testGetDigitOutOfBounds() throws IOException {
+		PiDigitResponse response;
+
+		response = instanceUnderTest.getDigit(-1);
+		assertTrue("Should be out of bounds", response.isOutOfBounds());
+
+		response = instanceUnderTest.getDigit(10000000);
+		assertTrue("Should be out of bounds", response.isOutOfBounds());
+	}
+
+	@Test
+	public void testGetRangeOutOfBounds() throws IOException {
+		PiDigitResponse response;
+
+		response = instanceUnderTest.getRange(1000000 - 10, 1000000 + 400);
+		assertTrue("Should be out of bounds", response.isOutOfBounds());
+		assertFalse("Should not be truncated", response.isTruncated());
+		assertEquals("10 elements", 10, response.getDigits().length);
+	}
+
+	@Test
+	public void testGetRangeOutOfBoundsAndTruncated() throws IOException {
+		PiDigitResponse response;
+
+		response = instanceUnderTest.getRange(999990, 1000000 + 600);
+		assertTrue("Should be out of bounds", response.isOutOfBounds());
+		assertTrue("Should be truncated", response.isTruncated());
+
+		assertEquals("10 elements", 10, response.getDigits().length);
+	}
+
+	@Test
+	public void testGetRangeTruncatedSoNoLongerOutOfBounds() throws IOException {
+		PiDigitResponse response;
+
+		response = instanceUnderTest.getRange(1000000 - 600, 1000000 + 200);
+		assertFalse("Should not be out of bounds", response.isOutOfBounds());
+		assertTrue("Should be truncated", response.isTruncated());
+
+		assertEquals("500 elements", 500, response.getDigits().length);
 	}
 }
