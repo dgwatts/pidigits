@@ -2,7 +2,11 @@ package com.github.dgwatts.pidigits;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
+
+import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +55,7 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 	@Override
 	public PiDigitResponse getDigits(int[] indices) throws IOException {
 		boolean isTruncated = false;
+		boolean isOutOfBounds = false;
 		final int maxDigits = configurationService.getMaxDigits();
 		if(indices.length > maxDigits) {
 			int[] truncated = new int[maxDigits];
@@ -59,11 +64,31 @@ public class PiDigitsServiceImpl implements PiDigitsService {
 			isTruncated = true;
 		}
 
+		List<Integer> actualIndices = new ArrayList<>();
+		for(int i = 0; i < indices.length; i++) {
+			final boolean thisIndexOutOfBounds = isOutOfBounds(indices[i]);
+			isOutOfBounds |= thisIndexOutOfBounds;
+			if(!thisIndexOutOfBounds) {
+				actualIndices.add(indices[i]);
+			}
+		}
+
+		indices = actualIndices.stream().mapToInt(Integer::intValue).toArray();
+
 		PiDigit[] digits = new PiDigit[indices.length];
 		for(int i = 0; i < indices.length; i++) {
+			final boolean thisIndexOutOfBounds = isOutOfBounds(indices[i]);
+			isOutOfBounds |= thisIndexOutOfBounds;
+			if(thisIndexOutOfBounds) {
+				continue;
+			}
 			digits[i] = new PiDigit(indices[i], doGet(indices[i]));
 		}
-		return new PiDigitResponse(digits, isTruncated);
+		return new PiDigitResponse(digits, isTruncated, isOutOfBounds);
+	}
+
+	private boolean isOutOfBounds(int index) {
+		return index < 0 || index >= resourceSize;
 	}
 
 	private char doGet(int index) throws IOException {
