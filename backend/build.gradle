@@ -1,3 +1,6 @@
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot'
@@ -30,6 +33,40 @@ jar {
 	}
 }
 
+task generateVersionInfo {
+		doLast {
+			def git = grgit.open(dir: "${rootProject.projectDir}/.git")
+			def branchName = git.branch.current().getName().trim();
+			def hash = git.resolve.toCommit(git.branch.current()).id;
+			def buildTime = Long.toString(DateTime.now(DateTimeZone.UTC).getMillis());
+
+			File targetDirectory = new File("${project.buildDir}/generated-resources/")
+			if(!targetDirectory.exists()) {
+				targetDirectory.mkdirs();
+			}
+
+			File versionFile = new File(targetDirectory, "version.properties")
+			if(!versionFile.exists()) {
+				versionFile.createNewFile();
+			}
+			FileWriter vfw = new FileWriter(versionFile);
+			vfw.write("pidigits.version: ${rootProject.version}\n");
+			vfw.write("pidigits.hash: ${hash}\n");
+			vfw.write("pidigits.branch: ${branchName}\n");
+			vfw.write("pidigits.buildTime: ${buildTime}\n");
+			vfw.flush();
+			vfw.close();
+		}
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDirs "src/main/resources", "${project.buildDir}/generated-resources"
+		}
+	}
+}
+
 bootJar {
 	from('../frontend/build') {
 		into 'static'
@@ -38,6 +75,7 @@ bootJar {
 	mainClassName 'com.github.dgwatts.pidigits.PidigitsApplication'
 }
 
+bootJar.dependsOn(generateVersionInfo)
 bootJar.dependsOn(':frontend:npm_run_build')
 
 docker {
