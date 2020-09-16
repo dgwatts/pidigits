@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
+@Api(value="pidigits",  description="Operations for retrieving digits of pi")
 public class PiDigitsController {
 
 	private static final int DEFAULT_RANGE = 30;
@@ -26,11 +30,13 @@ public class PiDigitsController {
 	private HttpServletResponse response;
 
 	@GetMapping("/pidigits")
+	@ApiOperation(value = "Get the first 30 digits of pi", response = PiDigitResponse.class, produces = "application/json", httpMethod = "GET")
 	public PiDigitResponse getDigits() throws IOException {
 		return getDigits(null);
 	}
 
 	@GetMapping("/pidigits/{criteria}")
+	@ApiOperation(value = "Get multiple pi", response = PiDigitResponse.class, produces = "application/json", httpMethod = "GET")
 	public PiDigitResponse getDigits(@PathVariable String criteria) throws IOException {
 
 		PiDigitResponse piDigitResponse = new PiDigitResponse();

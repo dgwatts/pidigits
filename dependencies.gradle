@@ -27,4 +27,5 @@ ext.libraries = [
 				exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 			}
 	],
+	springfoxSwaggerStarter: "io.springfox:springfox-boot-starter:3.0.0"
 ]

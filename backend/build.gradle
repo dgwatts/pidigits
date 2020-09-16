@@ -23,6 +23,8 @@ dependencies {
 	implementation libraries.slf4j.api
 	implementation libraries.slf4j.simple
 
+	implementation libraries.springfoxSwaggerStarter
+
 	developmentOnly libraries.springBoot.devTools, libraries.springBoot.exclusions
 	testImplementation libraries.springBoot.starterTest, libraries.springBoot.testExclusions
 }

@@ -30,12 +30,17 @@ plugins {
 apply from: 'dependencies.gradle'
 
 group = 'com.github.dgwatts'
-version = '0.0.4-SNAPSHOT'
+version = '0.0.5-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 allprojects {
 	repositories {
+		mavenLocal()
 		mavenCentral()
+		jcenter()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
 	}
 }
