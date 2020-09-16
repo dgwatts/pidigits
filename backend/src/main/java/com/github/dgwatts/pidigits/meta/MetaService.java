@@ -1,4 +1,4 @@
-package com.github.dgwatts.pidigits;
+package com.github.dgwatts.pidigits.meta;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

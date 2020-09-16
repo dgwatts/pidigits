@@ -1,4 +1,4 @@
-package com.github.dgwatts.pidigits;
+package com.github.dgwatts.pidigits.core;
 
 public class PiDigitResponse {
 

@@ -1,6 +1,8 @@
-package com.github.dgwatts.pidigits;
+package com.github.dgwatts.pidigits.core;
 
 import static org.springframework.test.util.AssertionErrors.assertEquals;
+
+import com.github.dgwatts.pidigits.core.PiDigit;
 
 public class TestUtils {
 

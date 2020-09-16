@@ -1,4 +1,4 @@
-package com.github.dgwatts.pidigits;
+package com.github.dgwatts.pidigits.core;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

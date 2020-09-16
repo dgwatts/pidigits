@@ -1,6 +1,6 @@
-package com.github.dgwatts.pidigits;
+package com.github.dgwatts.pidigits.core;
 
-import static com.github.dgwatts.pidigits.TestUtils.assertRangeEquals;
+import static com.github.dgwatts.pidigits.core.TestUtils.assertRangeEquals;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
